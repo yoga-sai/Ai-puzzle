@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: adaptive-parsons-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-adaptive_parsons}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - adaptive-parsons-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: adaptive-parsons-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - adaptive-parsons-network
+
+  server:
+    build:
+      context: ./server
+      dockerfile: ${SERVER_DOCKERFILE:-Dockerfile.dev}
+    container_name: adaptive-parsons-server
+    restart: unless-stopped
+    ports:
+      - "${SERVER_PORT:-4000}:4000"
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - PORT=4000
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-adaptive_parsons}
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${POSTGRES_USER:-postgres}
+      - DB_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - DB_NAME=${POSTGRES_DB:-adaptive_parsons}
+      - DB_SSL=${DB_SSL:-false}
+      - REDIS_URL=redis://redis:6379
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENROUTER_REFERRER=${OPENROUTER_REFERRER:-http://localhost:4000}
+      - OPENROUTER_TITLE=${OPENROUTER_TITLE:-Adaptive Parsons}
+    networks:
+      - adaptive-parsons-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:4000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  client:
+    build:
+      context: ./client
+      dockerfile: ${CLIENT_DOCKERFILE:-Dockerfile.dev}
+    container_name: adaptive-parsons-client
+    restart: unless-stopped
+    ports:
+      - "${CLIENT_PORT:-5173}:5173"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    depends_on:
+      - server
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:4000}
+    networks:
+      - adaptive-parsons-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:5173"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  adaptive-parsons-network:
+    driver: bridge
+
+# Secrets can be configured using environment variables or .env file
+# For production, consider using Docker secrets or environment variables
+# Example: export OPENROUTER_API_KEY=your-key before running docker-compose

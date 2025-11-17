@@ -1,0 +1,51 @@
+PROJECT: Adaptive Parsons Puzzle Generator (Full-stack system)
+
+GOAL:
+A web-based adaptive learning tool that generates Parsons puzzles using an LLM. 
+Puzzle difficulty adapts in real time based on a learner skill model.
+
+ARCHITECTURE:
+Frontend: React (Vite) + WebParsons editor. Handles puzzle display, drag-drop logs, submissions.
+Backend: Node.js + Express, modular structure in /server/src.
+LLM Adapter: Uses OpenRouter Chat Completions API with OPENROUTER_API_KEY in env.
+Database: PostgreSQL (users, puzzles, attempts, events). Schema partially created.
+Infra: Docker + docker-compose for server, client, postgres.
+
+CORE COMPONENTS BUILT (COMPLETED ALREADY):
+- Project folder scaffold
+- Express server running on port 4000
+- Working routes: "/", "/health"
+- LLM adapter (callLLM) with retry logic
+- Prompt templates for puzzle generation + JSON parser
+- Puzzle generation API endpoint
+- Learner model (Elo-like skill update)
+- Difficulty scheduler (maps skill → difficulty params)
+- SQL definitions for users, puzzles, attempts
+- React WebParsons integration draft
+- UI professionalization checklist
+- Docker + CI planning
+
+CURRENT STATUS:
+- Server runs successfully via npm start
+- Health endpoint responds OK
+- DB not yet connected (DATABASE_URL missing)
+- LLM not active (OPENROUTER_API_KEY missing)
+- Some endpoints unfinished: submit endpoint, analytics, admin panel
+- Frontend still incomplete: dashboard, progress charts, full Parsons integration
+- Needs stable DB setup + migrations
+- Needs environment files and cleanup of server scripts
+
+YOUR JOB:
+Continue implementing missing pieces EXACTLY as directed in the next instructions I provide.
+Do NOT redo completed work. Do NOT remove working code.
+Honor architecture, folder structure, and naming conventions.
+All secrets must stay in env variables.
+
+NOTES FOR EXECUTION:
+- Server path: c:\Users\kesha\AppData\Roaming\dop\puzzle\server
+- Do not call DB unless configured
+- Do not hardcode API keys
+- Keep responses strictly technical and concise
+- When modifying files, output full file contents
+
+WAIT for the next instruction. Do not act yet.

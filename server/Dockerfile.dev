@@ -1,0 +1,19 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev)
+RUN npm install
+
+# Copy application files
+COPY . .
+
+EXPOSE 4000
+
+ENV NODE_ENV=development
+ENV PORT=4000
+
+CMD ["npm", "run", "dev"]

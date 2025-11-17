@@ -1,0 +1,31 @@
+ID,Difficulty,Language,Generated,Validated,Solvable,Passed,FailureReason
+puzzle-easy-python-1,easy,python,YES,YES,YES,YES,
+puzzle-easy-javascript-2,easy,javascript,YES,YES,YES,YES,
+puzzle-easy-python-3,easy,python,YES,NO,NO,NO,schemaValidation
+puzzle-easy-javascript-4,easy,javascript,YES,YES,YES,YES,
+puzzle-medium-python-67,medium,python,YES,YES,NO,NO,unsolvable
+puzzle-medium-javascript-68,medium,javascript,YES,YES,YES,YES,
+puzzle-hard-python-133,hard,python,YES,NO,NO,NO,parseError
+puzzle-hard-javascript-134,hard,javascript,YES,YES,YES,YES,
+
+SUMMARY,Count
+Total,200
+Passed,162
+Failed,38
+
+BY DIFFICULTY,Total,Passed,Failed,Pass Rate
+easy,67,62,5,92.5%
+medium,67,58,9,86.6%
+hard,66,42,24,63.6%
+
+BY LANGUAGE,Total,Passed,Failed,Pass Rate
+python,100,78,22,78.0%
+javascript,100,84,16,84.0%
+
+FAILURE REASONS,Count
+parseError,8
+schemaValidation,18
+unsolvable,10
+invalidSolutionOrder,2
+other,0
+

@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+
+# Environment files
+.env
+.env.local
+
+# Test files
+**/__tests__/
+**/*.test.js
+coverage/
+
+# IDE
+.vscode/
+.idea/
+
+# Build output (will be generated in container)
+dist/
+build/
+
+# Logs
+*.log
+
